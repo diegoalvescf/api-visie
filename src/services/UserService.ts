@@ -1,6 +1,6 @@
 import User, { IUser } from '../models/User';
 
-class UserRepository {
+class UserService {
   async create(userData: IUser) {
     const user = await User.create(userData);
     return user;
@@ -23,12 +23,6 @@ class UserRepository {
   async delete(id: string) {
     await User.findByIdAndDelete(id);
   }
-
-  async findByCpfOrRg(cpf: IUser['cpf'], rg: IUser['rg']) {
-    const user = await User.findOne({ $or: [{ cpf }, { rg }] });
-
-    return user !== null;
-  }
 }
 
-export default UserRepository;
+export default UserService;

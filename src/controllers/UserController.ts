@@ -1,27 +1,16 @@
 import { Request, Response } from 'express';
-import UserRepository from '../repositories/UserRepository';
+import UserService from '../services/UserService';
 
 class UserController {
-  private userRepository: UserRepository;
+  private _userService: UserService;
 
   constructor() {
-    this.userRepository = new UserRepository();
+    this._userService = new UserService();
   }
 
   async create(req: Request, res: Response) {
     try {
-      const { cpf, rg } = req.body;
-
-      const userExists = await this.userRepository.findByCpfOrRg(cpf, rg);
-
-      if (userExists) {
-        return res.status(400).json({
-          error: 'Registration failed',
-          message: 'User already exists',
-        });
-      }
-
-      const user = await this.userRepository.create(req.body);
+      const user = await this._userService.create(req.body);
       return res.json(user);
     } catch (error) {
       return res.status(500).send({
@@ -33,7 +22,7 @@ class UserController {
   async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const user = await this.userRepository.findById(id);
+      const user = await this._userService.findById(id);
       return res.json(user);
     } catch (error) {
       return res.status(500).send({
@@ -44,7 +33,7 @@ class UserController {
 
   async findAll(req: Request, res: Response) {
     try {
-      const users = await this.userRepository.findAll();
+      const users = await this._userService.findAll();
       return res.json(users);
     } catch (error) {
       return res.status(500).send({
@@ -56,7 +45,7 @@ class UserController {
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const updatedUser = await this.userRepository.update(id, req.body);
+      const updatedUser = await this._userService.update(id, req.body);
       return res.json(updatedUser);
     } catch (error) {
       return res.status(500).send({
@@ -68,7 +57,7 @@ class UserController {
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      await this.userRepository.delete(id);
+      await this._userService.delete(id);
       return res.json({ message: 'User deleted successfully' });
     } catch (error) {
       return res.status(500).send({
